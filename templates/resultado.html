@@ -2,148 +2,185 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Resultado de Simulación - EID1_cal1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Monitoreo de Drones · Resultados</title>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-ENjdO4Dr2bkBIFxQpeo2V6ijYj6qVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"
+  />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
 
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
   <script>
     window.MathJax = {
-      tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-      svg: {fontCache: 'global'}
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
     };
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    id="MathJax-script"
+    async
+  ></script>
 </head>
 <body>
-  <h1>Resultado de Simulación</h1>
-  <hr>
 
-  <!-- Elipse 1 (Dron 1) -->
-  <h2>Elipse 1 (Dron 1)</h2>
-  <p><strong>RUT ingresado:</strong> {{ rut1 }}</p>
-  <p>
-    Dígitos extraídos (d₁…d₈):<br>
-    {% for d in digits1 %}
-      d<sub>{{ loop.index }}</sub> = {{ d }}{% if not loop.last %}, {% endif %}
-    {% endfor %}
-  </p>
-  <p><strong>Cálculo paso a paso (Caso {{ case_type }}):</strong></p>
-  <ul>
-    <li>Centro (h, k) = (d₁, d₂) = ({{ h1 }}, {{ k1 }})</li>
-    <li>
-      {% if case_type == "1" %}
-        Semieje <strong>a₁</strong> = d₃ + d₄ = {{ digits1[2] }} + {{ digits1[3] }} = <strong>{{ a1 }}</strong><br>
-        Semieje <strong>b₁</strong> = d₅ + d₆ = {{ digits1[4] }} + {{ digits1[5] }} = <strong>{{ b1 }}</strong>
-      {% else %}
-        Semieje <strong>a₁</strong> = d₆ + d₇ = {{ digits1[5] }} + {{ digits1[6] }} = <strong>{{ a1 }}</strong><br>
-        Semieje <strong>b₁</strong> = d₈ + d₃ = {{ digits1[7] }} + {{ digits1[2] }} = <strong>{{ b1 }}</strong>
-      {% endif %}
-    </li>
-    <li>
-      Orientación:<br>
-      {% if case_type == "1" %}
-        – d₈ = {{ digits1[7] }} → {% if digits1[7] % 2 == 0 %}<strong>horizontal</strong>{% else %}<strong>vertical</strong>{% endif %}
-      {% else %}
-        – d₄ = {{ digits1[3] }} → {% if digits1[3] % 2 == 0 %}<strong>horizontal</strong>{% else %}<strong>vertical</strong>{% endif %}
-      {% endif %}
-      &nbsp;&rarr; <em>{{ orientation1 }}</em>
-    </li>
-  </ul>
-  <p><strong>Ecuación canónica (LaTeX):</strong> $$ {{ eq1_can }} $$</p>
-  <p><strong>Forma general:</strong> $$ {{ eq1_gen }} = 0 $$</p>
+  <div class="container">
+    <h1 class="text-center mb-4">Resultados de la Simulación</h1>
 
-  <hr>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h4 class="mb-0">Parámetros y Ecuaciones</h4>
+      </div>
+      <div class="card-body">
+        <div class="row gy-3">
+          <div class="col-md-6">
+            <div class="border rounded p-3 h-100">
+              <h5>Drone 1 (Original)</h5>
+              <p class="mb-1"><strong>RUT:</strong> {{ rut1 }}</p>
+              <p class="mb-1">
+                <strong>Dígitos d₁…d₈:</strong>
+                {% for d in digits1 %}
+                  d{{ loop.index }} = {{ d }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+              </p>
+              <p class="mb-1"><strong>Centro (h, k):</strong> ({{ h1 }}, {{ k1 }})</p>
+              <p class="mb-1"><strong>Semiejes (a, b):</strong> ({{ a1 }}, {{ b1 }})</p>
+              <p class="mb-1"><strong>Orientación:</strong> {{ orientation1 | capitalize }}</p>
+              <p class="mb-1">
+                <strong>Ecuación canónica:</strong>
+                <span class="fs-6">
+                  $$ {{ eq1_can }} $$
+                </span>
+              </p>
+              <p class="mb-1">
+                <strong>Ecuación general:</strong>
+                <span class="fs-6">
+                  $$ {{ eq1_gen }} $$
+                </span>
+              </p>
+            </div>
+          </div>
 
-  <!-- Elipse 2 (Dron 2) -->
-  <h2>Elipse 2 (Dron 2)</h2>
-  <p><strong>RUT ingresado:</strong> {{ rut2 }}</p>
-  <p>
-    Dígitos extraídos (d₁…d₈):<br>
-    {% for d in digits2 %}
-      d<sub>{{ loop.index }}</sub> = {{ d }}{% if not loop.last %}, {% endif %}
-    {% endfor %}
-  </p>
-  <p><strong>Cálculo paso a paso (Caso {{ case_type }}):</strong></p>
-  <ul>
-    <li>Centro (h, k) = (d₁, d₂) = ({{ h2 }}, {{ k2 }})</li>
-    <li>
-      {% if case_type == "1" %}
-        Semieje <strong>a₂</strong> = d₃ + d₄ = {{ digits2[2] }} + {{ digits2[3] }} = <strong>{{ a2 }}</strong><br>
-        Semieje <strong>b₂</strong> = d₅ + d₆ = {{ digits2[4] }} + {{ digits2[5] }} = <strong>{{ b2 }}</strong>
-      {% else %}
-        Semieje <strong>a₂</strong> = d₆ + d₇ = {{ digits2[5] }} + {{ digits2[6] }} = <strong>{{ a2 }}</strong><br>
-        Semieje <strong>b₂</strong> = d₈ + d₃ = {{ digits2[7] }} + {{ digits2[2] }} = <strong>{{ b2 }}</strong>
-      {% endif %}
-    </li>
-    <li>
-      Orientación:<br>
-      {% if case_type == "1" %}
-        – d₈ = {{ digits2[7] }} → {% if digits2[7] % 2 == 0 %}<strong>horizontal</strong>{% else %}<strong>vertical</strong>{% endif %}
-      {% else %}
-        – d₄ = {{ digits2[3] }} → {% if digits2[3] % 2 == 0 %}<strong>horizontal</strong>{% else %}<strong>vertical</strong>{% endif %}
-      {% endif %}
-      &nbsp;&rarr; <em>{{ orientation2 }}</em>
-    </li>
-  </ul>
-  <p><strong>Ecuación canónica (LaTeX):</strong> $$ {{ eq2_can }} $$</p>
-  <p><strong>Forma general:</strong> $$ {{ eq2_gen }} = 0 $$</p>
+          <div class="col-md-6">
+            <div class="border rounded p-3 h-100">
+              <h5>Drone 2 (Original)</h5>
+              <p class="mb-1"><strong>RUT:</strong> {{ rut2 }}</p>
+              <p class="mb-1">
+                <strong>Dígitos d₁…d₈:</strong>
+                {% for d in digits2 %}
+                  d{{ loop.index }} = {{ d }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+              </p>
+              <p class="mb-1"><strong>Centro (h, k):</strong> ({{ h2 }}, {{ k2 }})</p>
+              <p class="mb-1"><strong>Semiejes (a, b):</strong> ({{ a2 }}, {{ b2 }})</p>
+              <p class="mb-1"><strong>Orientación:</strong> {{ orientation2 | capitalize }}</p>
+              <p class="mb-1">
+                <strong>Ecuación canónica:</strong>
+                <span class="fs-6">
+                  $$ {{ eq2_can }} $$
+                </span>
+              </p>
+              <p class="mb-1">
+                <strong>Ecuación general:</strong>
+                <span class="fs-6">
+                  $$ {{ eq2_gen }} $$
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <hr>
+    {% if not colision %}
+      <div class="alert alert-success" role="alert">
+        <strong>Sin colisión:</strong> las trayectorias originales son seguras
+        (<em>riesgo {{ nivel }}%</em>).
+      </div>
+    {% else %}
+      <div class="alert alert-danger" role="alert">
+        <strong>¡Colisión detectada!</strong>
+        (<em>riesgo {{ nivel }}%</em>). A continuación se muestran las gráficas originales
+        y los ajustes necesarios.
+      </div>
+    {% endif %}
 
-  {% if colision %}
-    <!-- 1) Mostrar gráfico 2D y 3D con la colisión detectada -->
-    <h2 style="color:red;">Gráficas originales (SE OBSERVA COLISIÓN)</h2>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h4 class="mb-0">Gráficas Originales</h4>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-lg-6 plot-container">
+            {{ plot2d_div_collision | safe }}
+          </div>
+          <div class="col-lg-6 plot-container">
+            {{ plot3d_div_collision | safe }}
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <h3>2D (colisión)</h3>
-    <div id="plot2d_div_collision">{{ plot2d_div_collision | safe }}</div>
+    {% if colision %}
+      <div class="card mb-4">
+        <div class="card-header">
+          <h4 class="mb-0">Datos Tras Ajuste</h4>
+        </div>
+        <div class="card-body">
+          <div class="row gy-3">
+            <div class="col-md-6">
+              <div class="border rounded p-3 h-100">
+                <h5>Drone 1 (Ajustado)</h5>
+                <p class="mb-1"><strong>Nuevo RUT:</strong> {{ rut1_adjusted }}</p>
+                <p class="mb-1"><strong>Semiejes (a, b):</strong> ({{ a1_safe }}, {{ b1_safe }})</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="border rounded p-3 h-100">
+                <h5>Drone 2 (Ajustado)</h5>
+                <p class="mb-1"><strong>Nuevo RUT:</strong> {{ rut2_adjusted }}</p>
+                <p class="mb-1"><strong>Semiejes (a, b):</strong> ({{ a2_safe }}, {{ b2_safe }})</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <h3>3D (colisión)</h3>
-    <div id="plot3d_div_collision">{{ plot3d_div_collision | safe }}</div>
+      <div class="card mb-4">
+        <div class="card-header">
+          <h4 class="mb-0">Gráficas Tras Ajuste (SAFE)</h4>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-6 plot-container">
+              {{ plot2d_div_safe | safe }}
+            </div>
+            <div class="col-lg-6 plot-container">
+              {{ plot3d_div_safe | safe }}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
 
-    <hr>
+    <div class="text-center mb-4">
+      <a href="{{ url_for('index') }}" class="btn btn-secondary btn-lg">
+        ← Volver a Inicio
+      </a>
+    </div>
+  </div>
 
-    <!-- 2) Recomendación textual: indicar el RUT 2 ajustado -->
-    <h2 style="color:red;">¡RIESGO DE COLISIÓN DETECTADO!</h2>
-    <p>Nivel de riesgo: <strong>{{ nivel }} %</strong></p>
-
-    <h3>Recomendación de ajuste (RUT 2 nuevo)</h3>
-    <p>
-      Para eliminar la colisión, hemos buscado un <strong>RUT 2</strong> (con dígitos enteros) tal que:
-      <br>
-      – El semieje <strong>a₂</strong> (suma de dos dígitos correspondientes) se haya reducido en al menos 1 unidad,  
-      – Y además, sus perímetros ya no colisionen con la elipse del dron 1.  
-    </p>
-    <p>
-      <strong>Nuevo RUT 2 ajustado:</strong> <code>{{ new_rut2 }}</code><br>
-      – Semiejes originales segundo dron: a₂ = {{ a2 }}, b₂ = {{ b2 }}<br>
-      – Semiejes ajustados segundo dron (enteros):  
-        a₂,new = {{ a2_safe }},  b₂,new = {{ b2_safe }}
-    </p>
-    <hr>
-
-    <!-- 3) Mostrar gráficos “safe” después del ajuste -->
-    <h2>Gráficas ajustadas (“SAFE”)</h2>
-
-    <h3>2D (ajustado)</h3>
-    <div id="plot2d_div_safe">{{ plot2d_div_safe | safe }}</div>
-
-    <h3>3D (ajustado)</h3>
-    <div id="plot3d_div_safe">{{ plot3d_div_safe | safe }}</div>
-  {% else %}
-    <!-- Si NO hay colisión, solo mostramos título y gráficos originales -->
-    <h2 style="color:green;">Trayectorias seguras (SAFE)</h2>
-    <p>Nivel de riesgo: <strong>{{ nivel }} %</strong> (sin colisión)</p>
-
-    <hr>
-
-    <h3>2D (original)</h3>
-    <div id="plot2d_div">{{ plot2d_div | safe }}</div>
-
-    <h3>3D (original)</h3>
-    <div id="plot3d_div">{{ plot3d_div | safe }}</div>
-  {% endif %}
-
-  <br />
-  <a href="/">← Volver</a>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-RO1q7ERQ+gT9Fj3p8ZzPDVtgLOn9PRLV4R/bMqcMCP4dmH6KB0u2TR+08D6NQp"
+    crossorigin="anonymous"
+  ></script>
 </body>
 </html>

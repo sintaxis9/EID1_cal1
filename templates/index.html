@@ -2,48 +2,74 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Simulación de Drones - EID1_cal1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Monitoreo de Drones · Inicio</title>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-ENjdO4Dr2bkBIFxQpeo2V6ijYj6qVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"
+  />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
 </head>
 <body>
-  <h1>Simulación de Trayectorias de Drones</h1>
-  <p>
-    Ingresa los RUTs de ambos drones (cada uno con al menos 8 dígitos),<br>
-    y selecciona el “Caso de grupo” (1 = impar, 2 = par).<br>
-    El sistema detectará si las **líneas límite** (perímetros) de las elipses colisionan o no.  
-    En caso de colisión, mostrará las gráficas originales (con cruce de perímetros),  
-    luego sugerirá un **RUT 2 nuevo** (con dígitos enteros) para el segundo dron que elimine la colisión,  
-    y finalmente mostrará las gráficas “safe” con ese ajuste aplicado.
-  </p>
 
-  <form method="post" action="/">
-    <label for="rut1">RUT del Dron 1:</label>
-    <input
-      type="text"
-      id="rut1"
-      name="rut1"
-      placeholder="Ej: 20.123.456-7"
-      required
-    />
-    <br /><br />
+  <div class="container">
+    <h1 class="text-center mb-4">Simulación de Trayectorias de Drones</h1>
 
-    <label for="rut2">RUT del Dron 2:</label>
-    <input
-      type="text"
-      id="rut2"
-      name="rut2"
-      placeholder="Ej: 21.234.567-8"
-      required
-    />
-    <br /><br />
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-8">
+        <div class="card">
+          <div class="card-header text-center">
+            <h4 class="mb-0">Ingrese Parámetros</h4>
+          </div>
+          <div class="card-body">
+            <form method="POST" action="{{ url_for('index') }}">
+              <div class="mb-3">
+                <label for="rut1" class="form-label">RUT Drone 1</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="rut1"
+                  name="rut1"
+                  placeholder="12.345.678-9"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="rut2" class="form-label">RUT Drone 2</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="rut2"
+                  name="rut2"
+                  placeholder="98.765.432-1"
+                  required
+                />
+              </div>
+              <div class="mb-4">
+                <label for="case_type" class="form-label">Tipo de Caso</label>
+                <select class="form-select" id="case_type" name="case_type" required>
+                  <option value="1" selected>Case 1 (grupo impar)</option>
+                  <option value="2">Case 2 (grupo par)</option>
+                </select>
+              </div>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">Generar Simulación</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <label for="case_type">Caso de grupo:</label>
-    <select id="case_type" name="case_type">
-      <option value="1">Caso 1 (impar)</option>
-      <option value="2">Caso 2 (par)</option>
-    </select>
-    <br /><br />
-
-    <button type="submit">Simular</button>
-  </form>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-RO1q7ERQ+gT9Fj3p8ZzPDVtgLOn9PRLV4R/bMqcMCP4dmH6KB0u2TR+08D6NQp"
+    crossorigin="anonymous"
+  ></script>
 </body>
 </html>

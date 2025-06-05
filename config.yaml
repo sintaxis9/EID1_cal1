@@ -1,0 +1,12 @@
+# config.yaml
+application:
+  title: "Sistema de Monitoreo de Drones - EID1_cal1"
+  version: "1.0"
+
+simulation:
+  default_height: 50 # Altura para gráfico 3D (en metros; se puede ajustar)
+  collision_tolerance: 0.1 # Tolerancia usada en detect_collision
+
+graphics:
+  resolution: 100 # Número de puntos para aproximar cada elipse
+  plots_folder: "static/plots"

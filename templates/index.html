@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simulación de Drones - EID1_cal1</title>
+</head>
+<body>
+  <h1>Simulación de Trayectorias de Drones</h1>
+  <p>
+    Ingresa los RUTs de ambos drones (cada uno con al menos 8 dígitos),<br>
+    y selecciona el “Caso de grupo” (1 = impar, 2 = par).<br>
+    El sistema detectará si las **líneas límite** (perímetros) de las elipses colisionan o no.  
+    En caso de colisión, mostrará las gráficas originales (con cruce de perímetros),  
+    luego sugerirá un **RUT 2 nuevo** (con dígitos enteros) para el segundo dron que elimine la colisión,  
+    y finalmente mostrará las gráficas “safe” con ese ajuste aplicado.
+  </p>
+
+  <form method="post" action="/">
+    <label for="rut1">RUT del Dron 1:</label>
+    <input
+      type="text"
+      id="rut1"
+      name="rut1"
+      placeholder="Ej: 20.123.456-7"
+      required
+    />
+    <br /><br />
+
+    <label for="rut2">RUT del Dron 2:</label>
+    <input
+      type="text"
+      id="rut2"
+      name="rut2"
+      placeholder="Ej: 21.234.567-8"
+      required
+    />
+    <br /><br />
+
+    <label for="case_type">Caso de grupo:</label>
+    <select id="case_type" name="case_type">
+      <option value="1">Caso 1 (impar)</option>
+      <option value="2">Caso 2 (par)</option>
+    </select>
+    <br /><br />
+
+    <button type="submit">Simular</button>
+  </form>
+</body>
+</html>

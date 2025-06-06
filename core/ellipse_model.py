@@ -4,7 +4,7 @@ class EllipseGenerator:
     def __init__(self, rut, case_type="1"):
         self.rut = rut
         self.case_type = case_type
-        self.digits = self._parse_rut()       # Lista [d₁, d₂, ..., d₈]
+        self.digits = self._parse_rut()       
         self.h, self.k = self._calculate_center()
         self.a, self.b = self._calculate_axes()
         self.orientation = self._determine_orientation()

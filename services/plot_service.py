@@ -1,17 +1,9 @@
-# services/plot_service.py
-
 import plotly.graph_objects as go
 import plotly.express as px
 import plotly.io as pio
 
 
 def build_2d_plot(drones: list, title: str) -> str:
-    """
-    Genera y devuelve el HTML de un gráfico 2D con Plotly para una lista arbitraria de elipses.
-    - `drones`: lista de instancias EllipseGenerator.
-    - `title`: título del gráfico.
-    Devuelve un string que se integra en la plantilla (div con Plotly).
-    """
     palette = px.colors.qualitative.Plotly  # Paleta cíclica
     fig = go.Figure()
 
@@ -32,7 +24,6 @@ def build_2d_plot(drones: list, title: str) -> str:
                 )
             )
         )
-        # Punto del centro con texto
         fig.add_trace(
             go.Scatter(
                 x=[dron.h],
@@ -59,13 +50,6 @@ def build_2d_plot(drones: list, title: str) -> str:
 
 
 def build_3d_plot(drones: list, title: str, height_z: float = 50) -> str:
-    """
-    Genera y devuelve el HTML de un gráfico 3D con Plotly para una lista arbitraria de elipses.
-    - `drones`: lista de instancias EllipseGenerator.
-    - `title`: título del gráfico.
-    - `height_z`: altura Z fija para todas las elipses.
-    Devuelve un string que se integra en la plantilla (div con Plotly).
-    """
     palette = px.colors.qualitative.Plotly
     fig = go.Figure()
 
@@ -87,7 +71,6 @@ def build_3d_plot(drones: list, title: str, height_z: float = 50) -> str:
                 )
             )
         )
-        # Punto del centro con texto en 3D
         fig.add_trace(
             go.Scatter3d(
                 x=[dron.h],

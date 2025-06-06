@@ -1,8 +1,3 @@
-/* ===========================================
-   results.css — Estilos minimalistas para la página de resultados
-   =========================================== */
-
-/* (La parte de variables y tipografía permanece igual) */
 body {
   font-family: 'Inter', sans-serif;
 }
@@ -19,7 +14,6 @@ body {
   --shadow-color: rgba(0, 0, 0, 0.04);
 }
 
-/* Contenedor principal (centrado y con máximo ancho) */
 .results-container {
   background-color: var(--bg-light);
   max-width: 1000px;
@@ -27,14 +21,12 @@ body {
   padding: 2rem 1rem;
 }
 
-/* Encabezado principal */
 h1 {
   color: var(--primary-color);
   font-weight: 600;
   margin-bottom: 2rem;
 }
 
-/* Badges de drones */
 .drone-badges {
   display: flex;
   flex-wrap: wrap;
@@ -52,8 +44,6 @@ h1 {
   font-weight: 500;
 }
 
-/* Contenedor de tarjetas de dron */
-/* Antes: flex con anchos fijos. Ahora permitimos que el contenido determine el ancho */
 .drone-cards {
   display: flex;
   flex-wrap: wrap;
@@ -63,21 +53,10 @@ h1 {
 }
 
 .drone-card {
-  /* 
-    - Usamos flex: 1 1 auto para que la tarjeta se ajuste al ancho de su contenido.
-    - Definimos un min-width para que no se haga demasiado estrecha.
-    - max-width: none (o alto valor) para que no limite el crecimiento si la ecuación es larga.
-  */
   flex: 1 1 auto;
   min-width: 280px;
 }
 
-/* 
-  Eliminamos las reglas @media que forzaban anchos fijos.
-  Ahora cada tarjeta crece según su contenido y se envuelve cuando no cabe.
-*/
-
-/* Tarjetas (cards) */
 .card {
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
@@ -85,7 +64,7 @@ h1 {
   box-shadow: 0 2px 6px var(--shadow-color);
   display: flex;
   flex-direction: column;
-  word-wrap: break-word; /* Asegura que texto largo (latex) se rompa si es necesario */
+  word-wrap: break-word; 
 }
 
 .card-header {
@@ -97,7 +76,6 @@ h1 {
   border-top-right-radius: 0.5rem;
 }
 
-/* Colores de cabeceras */
 .header-original {
   background-color: var(--primary-color);
 }
@@ -121,15 +99,13 @@ h1 {
   line-height: 1.4;
 }
 
-/* Texto de ecuaciones LaTeX */
 .latex-block {
   margin-top: 0.25rem;
   margin-bottom: 0.5rem;
   font-size: 0.9rem;
-  overflow-wrap: break-word; /* Permite que ecuaciones largas se separen */
+  overflow-wrap: break-word; 
 }
 
-/* Tablas */
 .table {
   border-radius: 0.5rem;
   overflow: hidden;
@@ -167,8 +143,6 @@ h1 {
   font-weight: 500;
 }
 
-/* Fila de gráficos (Flexbox) */
-/* Ahora permitimos que los gráficos crezcan según su contenido */
 .graph-row {
   display: flex;
   flex-wrap: wrap;
@@ -178,15 +152,10 @@ h1 {
 }
 
 .graph-card {
-  /* 
-    - Flex auto para adaptarse al contenido
-    - min-width para no quedar demasiado estrecho
-  */
   flex: 1 1 auto;
   min-width: 320px; 
 }
 
-/* Contenedor de gráfico */
 .plot-container {
   width: 100%;
   height: auto;
@@ -194,7 +163,6 @@ h1 {
   margin-bottom: 1rem;
 }
 
-/* Mensaje de colisión grande */
 .alert-title {
   color: var(--red-alert);
   font-weight: 700;
@@ -202,7 +170,6 @@ h1 {
   margin-bottom: 1rem;
 }
 
-/* Botón de volver */
 .btn-back {
   background-color: var(--secondary-color);
   color: var(--text-color);
@@ -219,7 +186,6 @@ h1 {
   color: var(--card-bg);
 }
 
-/* Márgenes generales */
 .mb-4 {
   margin-bottom: 1.5rem !important;
 }

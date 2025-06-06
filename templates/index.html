@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Monitoreo de Drones · Inicio</title>
 
+  <!-- Google Fonts: Inter -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Bootstrap 5 CSS (CDN) -->
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
     rel="stylesheet"
@@ -12,64 +19,107 @@
     crossorigin="anonymous"
   />
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  <!-- CSS específico para el formulario -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}" />
 </head>
 <body>
 
-  <div class="container">
-    <h1 class="text-center mb-4">Simulación de Trayectorias de Drones</h1>
+  <div class="index-container d-flex align-items-center justify-content-center vh-100">
+    <div class="card form-card">
+      <div class="card-header form-header text-center">
+        <h2 class="mb-0">Simulación de Trayectorias</h2>
+      </div>
+      <div class="card-body">
+        <form method="POST" action="{{ url_for('index') }}">
+          <!-- Contenedor de RUTs -->
+          <div id="rut-container">
+            <div class="input-group mb-3">
+              <span class="input-group-text label-rut">1</span>
+              <input
+                type="text"
+                class="form-control rut-input"
+                name="rut_list[]"
+                placeholder="12.345.678-9"
+                required
+              />
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text label-rut">2</span>
+              <input
+                type="text"
+                class="form-control rut-input"
+                name="rut_list[]"
+                placeholder="98.765.432-1"
+                required
+              />
+            </div>
+          </div>
 
-    <div class="row justify-content-center">
-      <div class="col-lg-6 col-md-8">
-        <div class="card">
-          <div class="card-header text-center">
-            <h4 class="mb-0">Ingrese Parámetros</h4>
+          <!-- Botón agregar otro RUT -->
+          <div class="d-flex justify-content-start mb-4">
+            <button
+              type="button"
+              class="btn btn-add-rut"
+              id="add-rut-btn"
+            >
+              + Agregar RUT
+            </button>
           </div>
-          <div class="card-body">
-            <form method="POST" action="{{ url_for('index') }}">
-              <div class="mb-3">
-                <label for="rut1" class="form-label">RUT Drone 1</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="rut1"
-                  name="rut1"
-                  placeholder="12.345.678-9"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label for="rut2" class="form-label">RUT Drone 2</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="rut2"
-                  name="rut2"
-                  placeholder="98.765.432-1"
-                  required
-                />
-              </div>
-              <div class="mb-4">
-                <label for="case_type" class="form-label">Tipo de Caso</label>
-                <select class="form-select" id="case_type" name="case_type" required>
-                  <option value="1" selected>Case 1 (grupo impar)</option>
-                  <option value="2">Case 2 (grupo par)</option>
-                </select>
-              </div>
-              <div class="d-grid">
-                <button type="submit" class="btn btn-primary btn-lg">Generar Simulación</button>
-              </div>
-            </form>
+
+          <!-- Selección Case Type -->
+          <div class="mb-4">
+            <label for="case_type" class="form-label">Tipo de Caso</label>
+            <select class="form-select" id="case_type" name="case_type" required>
+              <option value="1" selected>Case 1 (grupo impar)</option>
+              <option value="2">Case 2 (grupo par)</option>
+            </select>
           </div>
-        </div>
+
+          <!-- Botón enviar -->
+          <div class="d-grid">
+            <button type="submit" class="btn btn-submit">Generar Simulación</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 
+  <!-- Bootstrap 5 JS y Popper (CDN) -->
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-RO1q7ERQ+gT9Fj3p8ZzPDVtgLOn9PRLV4R/bMqcMCP4dmH6KB0u2TR+08D6NQp"
     crossorigin="anonymous"
   ></script>
+
+  <!-- Script para clonar campos de RUT -->
+  <script>
+    (function() {
+      const container = document.getElementById('rut-container');
+      const addBtn = document.getElementById('add-rut-btn');
+
+      addBtn.addEventListener('click', () => {
+        const count = container.querySelectorAll('.input-group').length;
+        const nuevoIndex = count + 1;
+
+        const group = document.createElement('div');
+        group.classList.add('input-group', 'mb-3');
+
+        const span = document.createElement('span');
+        span.classList.add('input-group-text', 'label-rut');
+        span.textContent = nuevoIndex;
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.classList.add('form-control', 'rut-input');
+        input.name = 'rut_list[]';
+        input.placeholder = '00.000.000-0';
+        input.required = true;
+
+        group.appendChild(span);
+        group.appendChild(input);
+        container.appendChild(group);
+      });
+    })();
+  </script>
 </body>
 </html>

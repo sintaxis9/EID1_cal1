@@ -1,0 +1,131 @@
+/* ===========================================
+   index.css — Estilos minimalistas para la página de inicio
+   =========================================== */
+
+/* Google Font */
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+:root {
+  --bg-light: #f5f7fa;         /* Fondo muy claro */
+  --card-bg: #ffffff;          /* Blanco para fondo de tarjetas */
+  --primary-color: #667eea;    /* Azul lila suave */
+  --secondary-color: #e2e8f0;  /* Gris azulado muy claro */
+  --text-color: #2d3748;       /* Gris oscuro para texto */
+  --border-color: #cbd5e1;     /* Gris pálido para bordes */
+  --shadow-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Contenedor principal centrado */
+.index-container {
+  background-color: var(--bg-light);
+  width: 100%;
+  padding: 1rem;
+}
+
+/* Tarjeta del formulario */
+.form-card {
+  max-width: 400px;
+  width: 100%;
+  border: none;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  background-color: var(--card-bg);
+}
+
+/* Encabezado del formulario */
+.form-header {
+  background-color: var(--primary-color);
+  color: var(--card-bg);
+  padding: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Cuerpo de la tarjeta */
+.form-card .card-body {
+  background-color: var(--card-bg);
+  padding: 1.5rem;
+}
+
+/* Etiquetas de RUT */
+.label-rut {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  font-weight: 500;
+  width: 3rem;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Input de RUT */
+.rut-input {
+  border: 1px solid var(--border-color);
+  border-left: none;
+  border-radius: 0 0.375rem 0.375rem 0;
+  padding: 0.75rem 1rem;
+  color: var(--text-color);
+  background-color: #fff;
+  transition: border-color 0.2s;
+}
+
+.rut-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Botón Agregar RUT */
+.btn-add-rut {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-add-rut:hover {
+  background-color: var(--primary-color);
+  color: var(--card-bg);
+}
+
+/* Select de Case Type */
+.form-select {
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  color: var(--text-color);
+  background-color: #fff;
+}
+
+.form-label {
+  font-weight: 500;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+}
+
+/* Botón de envío */
+.btn-submit {
+  background-color: var(--primary-color);
+  color: var(--card-bg);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-submit:hover {
+  background-color: #5964d3; /* Un tono más oscuro */
+}
+
+/* Responsive: margen en pantallas pequeñas */
+@media (max-width: 575px) {
+  .form-card {
+    margin: 1rem;
+  }
+}

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Monitoreo de Drones · Resultados</title>
+
+  <!-- Google Fonts: Inter -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Bootstrap 5 CSS (CDN) -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-ENjdO4Dr2bkBIFxQpeo2V6ijYj6qVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"
+  />
+
+  <!-- CSS específico para la página de resultados -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/results.css') }}" />
+
+  <!-- Plotly.js (para renderizar los gráficos) -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <!-- MathJax (para ecuaciones LaTeX) -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    };
+  </script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    id="MathJax-script"
+    async
+  ></script>
+</head>
+<body>
+
+  <div class="results-container py-4">
+    <h1 class="text-center mb-5">Resultados de la Simulación</h1>
+
+    <!-- 1) Badges: Drone n: (rut) -->
+    <div class="drone-badges mb-5">
+      {% for rut in raw_ruts %}
+        <span class="badge badge-drone">
+          Drone {{ loop.index }}: {{ rut }}
+        </span>
+      {% endfor %}
+    </div>
+
+    <!-- 2) Bloques de información ORIGINAL de cada dron -->
+    <div class="drone-cards mb-5">
+      {% for param in orig_params %}
+        <div class="drone-card">
+          <div class="card h-100">
+            <div class="card-header header-original">
+              <h5 class="mb-0">Drone {{ loop.index }} (Original)</h5>
+            </div>
+            <div class="card-body">
+              <p class="mb-2"><strong>RUT:</strong> {{ param.rut }}</p>
+              <p class="mb-2"><strong>Dígitos:</strong>
+                {% for d in param.digits %}
+                  d{{ loop.index }}={{ d }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+              </p>
+              <p class="mb-2"><strong>Centro (h,k):</strong> ({{ param.h }}, {{ param.k }})</p>
+              <p class="mb-2"><strong>Semiejes:</strong> a={{ param.a }}, b={{ param.b }}</p>
+              <p class="mb-2"><strong>Ecuación canónica:</strong>
+                <div class="latex-block">$$ {{ param.eq_can }} $$</div>
+              </p>
+              <p class="mb-2"><strong>Ecuación general:</strong>
+                <div class="latex-block">$$ {{ param.eq_gen }} $$</div>
+              </p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- 3) Tabla de colisiones ORIGINALES -->
+    <div class="card mb-5">
+      <div class="card-header header-warning">
+        <h4 class="mb-0">Colisiones Originales</h4>
+      </div>
+      <div class="card-body">
+        {% if collisions_orig %}
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>Drone A</th>
+                  <th>Drone B</th>
+                  <th>Colisión</th>
+                  <th>Riesgo (%)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for c in collisions_orig %}
+                  <tr>
+                    <td>Drone {{ c.i + 1 }}</td>
+                    <td>Drone {{ c.j + 1 }}</td>
+                    <td>
+                      {% if c.colision %}
+                        <span class="badge badge-collision">Sí</span>
+                      {% else %}
+                        <span class="badge badge-safe">No</span>
+                      {% endif %}
+                    </td>
+                    <td>{{ c.nivel }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p class="text-center">No hay pares para evaluar.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- 4) Gráficos ORIGINALES 2D y 3D lado a lado -->
+    <div class="graph-row mb-5">
+      <div class="graph-card">
+        <div class="card">
+          <div class="card-header header-info">
+            <h5 class="mb-0">Gráfico 2D (Original)</h5>
+          </div>
+          <div class="card-body">
+            <div class="plot-container">
+              {{ plot2d_orig | safe }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="graph-card">
+        <div class="card">
+          <div class="card-header header-info">
+            <h5 class="mb-0">Gráfico 3D (Original)</h5>
+          </div>
+          <div class="card-body">
+            <div class="plot-container">
+              {{ plot3d_orig | safe }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5) Si existe colisión original, mostramos mensaje y ajustes -->
+    {% if collisions_orig|selectattr("colision")|list %}
+      <div class="text-center mb-5">
+        <h2 class="alert-title">¡COLISIÓN DETECTADA!</h2>
+        <h4 class="mb-4">Ajustes necesarios:</h4>
+      </div>
+
+      <!-- 6) Bloques de información FINAL (ajustados) para cada dron -->
+      <div class="drone-cards mb-5">
+        {% for param in final_params %}
+          <div class="drone-card">
+            <div class="card h-100 border-success">
+              <div class="card-header header-success">
+                <h5 class="mb-0">Drone {{ loop.index }} (Ajustado)</h5>
+              </div>
+              <div class="card-body">
+                <p class="mb-2"><strong>Nuevo RUT:</strong> {{ param.rut }}</p>
+                <p class="mb-2"><strong>Dígitos:</strong>
+                  {% for d in param.digits %}
+                    d{{ loop.index }}={{ d }}{% if not loop.last %}, {% endif %}
+                  {% endfor %}
+                </p>
+                <p class="mb-2"><strong>Centro (h,k):</strong> ({{ param.h }}, {{ param.k }})</p>
+                <p class="mb-2"><strong>Semiejes:</strong> a={{ param.a }}, b={{ param.b }}</p>
+                <p class="mb-2"><strong>Ecuación canónica:</strong>
+                  <div class="latex-block">$$ {{ param.eq_can }} $$</div>
+                </p>
+                <p class="mb-2"><strong>Ecuación general:</strong>
+                  <div class="latex-block">$$ {{ param.eq_gen }} $$</div>
+                </p>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- 7) Tabla de colisiones FINALES -->
+      <div class="card mb-5">
+        <div class="card-header header-success">
+          <h4 class="mb-0 text-white">Colisiones Tras Ajuste</h4>
+        </div>
+        <div class="card-body">
+          {% if collisions_final %}
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Drone A</th>
+                    <th>Drone B</th>
+                    <th>Colisión</th>
+                    <th>Riesgo (%)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for c in collisions_final %}
+                    <tr>
+                      <td>Drone {{ c.i + 1 }}</td>
+                      <td>Drone {{ c.j + 1 }}</td>
+                      <td>
+                        {% if c.colision %}
+                          <span class="badge badge-collision">Sí</span>
+                        {% else %}
+                          <span class="badge badge-safe">No</span>
+                        {% endif %}
+                      </td>
+                      <td>{{ c.nivel }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p class="text-center">No hay pares para evaluar tras ajuste.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- 8) Gráficos FINALES 2D y 3D lado a lado -->
+      <div class="graph-row mb-5">
+        <div class="graph-card">
+          <div class="card border-success">
+            <div class="card-header header-success">
+              <h5 class="mb-0">Gráfico 2D (Ajustado – SAFE)</h5>
+            </div>
+            <div class="card-body">
+              <div class="plot-container">
+                {{ plot2d_final | safe }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="graph-card">
+          <div class="card border-success">
+            <div class="card-header header-success">
+              <h5 class="mb-0">Gráfico 3D (Ajustado – SAFE)</h5>
+            </div>
+            <div class="card-body">
+              <div class="plot-container">
+                {{ plot3d_final | safe }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- 9) Botón para volver al formulario -->
+    <div class="text-center mb-4">
+      <a href="{{ url_for('index') }}" class="btn btn-back">
+        ← Volver al Formulario
+      </a>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS y Popper (CDN) -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-RO1q7ERQ+gT9Fj3p8ZzPDVtgLOn9PRLV4R/bMqcMCP4dmH6KB0u2TR+08D6NQp"
+    crossorigin="anonymous"
+  ></script>
+</body>
+</html>

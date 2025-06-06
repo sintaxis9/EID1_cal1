@@ -20,16 +20,32 @@ def adjust_ellipses(
     int, int,  # a1_safe, b1_safe
     int, int   # a2_safe, b2_safe
 ]:
+    """
+    Dada la elipse e1 y e2 originales (ya construidas), sus dígitos [d1..d8],
+    centros (h,k) y orientaciones, y los RUTs originales (rut1_str, rut2_str),
+    intenta:
+      1) Ajustar *solo* e2 (segunda elipse) por brute-force, manteniendo semiejes ≥ 1.
+      2) Si no es suficiente, ajustar *solo* e1.
+      3) Si aún colisionan, ajustar ambos simultáneamente (mínima reducción en a).
+    Devuelve:
+      - final_e1, final_e2: las dos instancias EllipseGenerator finales que NO colisionan.
+      - rut1_adjusted, rut2_adjusted: sus RUTs (con dígito verificador intacto si aplica).
+      - a1_safe, b1_safe, a2_safe, b2_safe: semiejes definitivos (todos ≥ 1).
+    """
 
+    # 0) Valores originales
     orig_a1, orig_b1 = e1.a, e1.b
     orig_a2, orig_b2 = e2.a, e2.b
 
+    # 1) Inicializamos por defecto: sin cambios en e1 ni e2
     a1_safe, b1_safe = orig_a1, orig_b1
     a2_safe, b2_safe = orig_a2, orig_b2
 
+    # Por defecto, los RUTs ajustados quedan igual que los originales
     rut1_adjusted = rut1_str
     rut2_adjusted = rut2_str
 
+    # Función interna: probar colisión si e2 tuviera estos 8 dígitos candidatos
     def collision_with_candidate_e2(candidate_digits2: list[int]) -> bool:
         tmp = EllipseGenerator(format_rut_from_digits(candidate_digits2, ""), case_type=case_type)
         tmp.h, tmp.k = h2, k2
@@ -40,10 +56,12 @@ def adjust_ellipses(
         else:  # case_type == "2"
             tmp.a = candidate_digits2[5] + candidate_digits2[6]
             tmp.b = candidate_digits2[7] + candidate_digits2[2]
+        # Si alguno < 1, descartamos
         if tmp.a < 1 or tmp.b < 1:
             return True
         return CollisionDetector.detect_collision(e1, tmp)
 
+    # Función interna: probar colisión si e1 tuviera estos 8 dígitos candidatos
     def collision_with_candidate_e1(candidate_digits1: list[int]) -> bool:
         tmp = EllipseGenerator(format_rut_from_digits(candidate_digits1, ""), case_type=case_type)
         tmp.h, tmp.k = h1, k1
@@ -58,6 +76,7 @@ def adjust_ellipses(
             return True
         return CollisionDetector.detect_collision(tmp, e2)
 
+    # --- 2) Intentar ajustar SOLO e2 ---
     found2 = False
     new_digits2 = digits2.copy()
 
@@ -71,6 +90,7 @@ def adjust_ellipses(
                 if new_b2 < 1 or new_b2 > orig_b2:
                     continue
 
+                # Generar candidatos (d3',d4') s/t sumen new_a2
                 paresA = [(abs(i - d3_o), i, new_a2 - i)
                           for i in range(10)
                           if 0 <= new_a2 - i <= 9]
@@ -78,6 +98,7 @@ def adjust_ellipses(
                     continue
                 paresA.sort(key=lambda x: (x[0], -x[1]))
 
+                # Generar candidatos (d5',d6') s/t sumen new_b2
                 paresB = [(abs(i - d5_o), i, new_b2 - i)
                           for i in range(10)
                           if 0 <= new_b2 - i <= 9]
@@ -103,6 +124,7 @@ def adjust_ellipses(
                 break
 
         if not found2:
+            # Fallback: reducir el semieje horizontal en 1
             nueva_a2 = max(1, orig_a2 - 1)
             pareja = next(((i, nueva_a2 - i)
                            for i in range(9, -1, -1)
@@ -155,6 +177,7 @@ def adjust_ellipses(
                 break
 
         if not found2:
+            # Fallback: reducir el semieje horizontal en 1
             nueva_a2 = max(1, orig_a2 - 1)
             pareja = next(((i, nueva_a2 - i)
                            for i in range(9, -1, -1)
@@ -165,12 +188,14 @@ def adjust_ellipses(
                 new_digits2 = tmp_digits2.copy()
                 a2_safe, b2_safe = nueva_a2, orig_b2
 
+    # Reconstruir candidate e2 con el posible ajuste
     new_rut2 = format_rut_from_digits(new_digits2, rut2_str.split('-')[-1] if '-' in rut2_str else "")
     e2_candidate = EllipseGenerator(new_rut2, case_type=case_type)
     e2_candidate.h, e2_candidate.k = h2, k2
     e2_candidate.orientation = orientation2
     e2_candidate.a, e2_candidate.b = a2_safe, b2_safe
 
+    # --- 3) Si e1 vs e2_candidate aún colisionan, ajustar sólo e1 ---
     if CollisionDetector.detect_collision(e1, e2_candidate):
         found1 = False
         new_digits1 = digits1.copy()
@@ -285,10 +310,12 @@ def adjust_ellipses(
         e1_candidate.orientation = orientation1
         e1_candidate.a, e1_candidate.b = a1_safe, b1_safe
 
+        # --- 4) Si aún colisionan con este ajuste de e1, reducir ambos simultáneamente ---
         if CollisionDetector.detect_collision(e1_candidate, e2):
             nueva_a2 = max(1, orig_a2 - 1)
             nueva_a1 = max(1, orig_a1 - 1)
 
+            # Ajustar dígitos e2 → nueva_a2
             tmp_digits2 = digits2.copy()
             pareja2 = next(((i, nueva_a2 - i)
                             for i in range(9, -1, -1)
@@ -299,6 +326,7 @@ def adjust_ellipses(
                 else:
                     tmp_digits2[5], tmp_digits2[6] = pareja2
 
+            # Ajustar dígitos e1 → nueva_a1
             tmp_digits1 = digits1.copy()
             pareja1 = next(((i, nueva_a1 - i)
                             for i in range(9, -1, -1)
@@ -325,11 +353,14 @@ def adjust_ellipses(
             if not CollisionDetector.detect_collision(e1_both, e2_both):
                 return e1_both, e2_both, both_rut1, both_rut2, nueva_a1, orig_b1, nueva_a2, orig_b2
 
+            # Si aún colisionan, devolvemos la mejor solución previa (ajuste solo e2)
             return e1, e2_candidate, rut1_str, format_rut_from_digits(new_digits2, rut2_str.split('-')[-1] if '-' in rut2_str else ""), \
                    orig_a1, orig_b1, a2_safe, b2_safe
 
+        # Ajuste exitoso solo e1
         return e1_candidate, e2, new_rut1, rut2_str, a1_safe, b1_safe, orig_a2, orig_b2
 
     else:
+        # Ajuste exitoso sólo en e2
         return e1, e2_candidate, rut1_str, format_rut_from_digits(new_digits2, rut2_str.split('-')[-1] if '-' in rut2_str else ""), \
                orig_a1, orig_b1, a2_safe, b2_safe
